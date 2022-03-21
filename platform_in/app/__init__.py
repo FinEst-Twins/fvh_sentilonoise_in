@@ -47,11 +47,9 @@ def create_app(script_info=None):
         payload = {"thing": thing, "sensor": sensor}
         logging.debug(f"getting datastream id {payload}")
         resp = requests.get(app.config["DATASTREAMS_ENDPOINT"], params=payload)
-        # resp = requests.get("http://host.docker.internal:1338/datastream", params=payload)
         logging.debug(f"response: {resp.json()} ")
 
         id = -1
-        # print(resp.json())
         ds = resp.json()["Datastreams"]
         if len(ds) == 1:
             id = ds[0]["datastream_id"]
@@ -74,7 +72,16 @@ def create_app(script_info=None):
     @app.route("/cesva/v1", methods=["PUT"])
     def put_sentilonoise_data():
         try:
+            headers = {"Content-type": "application/json"}
             data = request.get_data()
+            try:
+                resp_temp = requests.post(
+                    app.config["NEW_ENDPOINT"],
+                    data=json.dumps(data),
+                    headers=headers,
+                )
+            except Exception as e:
+                logging.error(f"{e}")
             logging.info(f"post data goes like : {data[0:200]}")
             data = request.get_json()
             logging.debug(data)
@@ -115,8 +122,6 @@ def create_app(script_info=None):
                 }
 
                 payload = {"topic": topic, "observation": observation}
-
-                headers = {"Content-type": "application/json"}
                 resp = requests.post(
                     app.config["OBSERVATIONS_ENDPOINT"],
                     data=json.dumps(payload),

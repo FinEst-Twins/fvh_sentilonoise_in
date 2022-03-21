@@ -14,6 +14,7 @@ def get_env_variable(name):
 
 
 class Config(object):
+    NEW_ENDPOINT = get_env_variable("NEW_ENDPOINT")
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
     DEBUG = True
