@@ -74,6 +74,9 @@ def create_app(script_info=None):
         try:
             headers = {"Content-type": "application/json"}
             data = request.get_data()
+            logging.info(f"post data goes like : {data[0:200]}")
+            data = request.get_json()
+            logging.debug(data)
             try:
                 resp_temp = requests.post(
                     app.config["NEW_ENDPOINT"],
@@ -82,9 +85,7 @@ def create_app(script_info=None):
                 )
             except Exception as e:
                 logging.error(f"{e}")
-            logging.info(f"post data goes like : {data[0:200]}")
-            data = request.get_json()
-            logging.debug(data)
+
             data_streams = data["sensors"]
 
             for data_stream in data_streams:
